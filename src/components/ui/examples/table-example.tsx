@@ -48,6 +48,10 @@ export const TableExample: FC = () => {
   const [indexExpandedRow, setIndexExpandedRow] = useState<number | null>(null)
   const { Modal, openModal, closeModal } = useModal()
 
+  const updateAddress =(e : any)=>{
+    console.log(e)
+  }
+
   return (
     <>
       <Title>Properties for Sale</Title>
