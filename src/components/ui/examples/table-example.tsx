@@ -56,7 +56,7 @@ export const TableExample: FC = () => {
        <Table
         indexExpandedRow={indexExpandedRow}
         setIndexExpandedRow={setIndexExpandedRow}
-            rows={propertiesTypes?._embedded?.map(({ id, created, modified, marketingMode }) => ({
+            rows={propertiesTypes?._embedded?.map(({ id, created, modified, marketingMode,address }) => ({
               cells: [
                 {
                   label: 'ID',
@@ -91,7 +91,7 @@ export const TableExample: FC = () => {
                 content: (
                   <>
                     <BodyText hasGreyText>
-                      You may wish to put either calls to action or forms in here that relate to the selected table row.
+                      Address : {address?.line1}
                     </BodyText>
                     <ButtonGroup alignment="center">
                       <Button intent="primary" chevronRight type="submit" onClick={openModal}>
