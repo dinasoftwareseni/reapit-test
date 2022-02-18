@@ -9,11 +9,15 @@ import {
   Table,
   Title,
   useModal,
+  FormLayout,
+  InputWrap,
+  InputGroup
 } from '@reapit/elements'
 import { useReapitConnect } from '@reapit/connect-session'
 import { reapitConnectBrowserSession } from '../../../core/connect-session'
 import { propertiesApiService } from '../../../platform-api/properties-api'
-import { PropertyModelPagedResult } from '@reapit/foundations-ts-definitions'
+import { propertiesUpdateApiService } from '../../../platform-api/properties-update-api'
+import { PropertyModelPagedResult, UpdatePropertyModel } from '@reapit/foundations-ts-definitions'
 
 export const handleOnCloseModal =
   (setIndexExpandedRow: Dispatch<SetStateAction<number | null>>, closeModal: () => void) => () => {
@@ -24,6 +28,7 @@ export const handleOnCloseModal =
 export const TableExample: FC = () => {
   const { connectSession } = useReapitConnect(reapitConnectBrowserSession)
   const [propertiesTypes, setPropertiesTypes] = useState<PropertyModelPagedResult>()
+  const [updatePropertiesTypes, setUpdatePropertiesTypes] = useState<UpdatePropertyModel>()
   
   useEffect(() => {
     const fetchPropertiesConfigs = async () => {
@@ -41,9 +46,29 @@ export const TableExample: FC = () => {
     }
   }, [connectSession])
 
+  useEffect(() => {
+    const fetchUpdatePropertiesConfigs = async () => {
+      
+      const serviceResponse = await propertiesUpdateApiService(connectSession)
+
+      if (serviceResponse) {
+        setUpdatePropertiesTypes(serviceResponse)
+      }
+    
+    }
+
+    if (connectSession) {
+      fetchUpdatePropertiesConfigs()
+    }
+  }, [connectSession])
+
 
   const [indexExpandedRow, setIndexExpandedRow] = useState<number | null>(null)
   const { Modal, openModal, closeModal } = useModal()
+
+  const updateAddress =(e : any)=>{
+    console.log(e)
+  }
 
   return (
     <>
@@ -90,10 +115,18 @@ export const TableExample: FC = () => {
               expandableContent: {
                 content: (
                   <>
-                    <BodyText hasGreyText>
-                      Address : {address?.line1}
-                    </BodyText>
+                    <form>
+                      <FormLayout hasMargin>
+                        <InputWrap>
+                          <InputGroup icon="homeSystem" label="Address" type="text" value= {address?.line1} />
+                        </InputWrap>
+                      </FormLayout>
+                    </form>
+                    
                     <ButtonGroup alignment="center">
+                      <Button intent="primary" chevronRight type="submit" onClick={()=>updateAddress(id)}>
+                        Update Address
+                      </Button>
                       <Button intent="primary" chevronRight type="submit" onClick={openModal}>
                         Open Modal
                       </Button>
