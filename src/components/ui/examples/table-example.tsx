@@ -52,7 +52,9 @@ export const TableExample: FC = () => {
   const [indexExpandedRow, setIndexExpandedRow] = useState<number | null>(null)
   const { Modal, openModal, closeModal } = useModal()
 
+  console.log(propertiesTypes)
   console.log(propertiesTypes._embedded)
+
 
   return (
     <>
@@ -65,7 +67,7 @@ export const TableExample: FC = () => {
        <Table
         indexExpandedRow={indexExpandedRow}
         setIndexExpandedRow={setIndexExpandedRow}
-            rows={propertiesTypes._embedded.map(({ id, created, modified, marketingMode }) => ({
+            rows={propertiesTypes._embedded?.map(({ id, created, modified, marketingMode }) => ({
               cells: [
                 {
                   label: 'ID',
