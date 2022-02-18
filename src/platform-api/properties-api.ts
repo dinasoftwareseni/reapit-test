@@ -4,7 +4,7 @@ import { URLS, BASE_HEADERS } from '../constants/api'
 
 export const propertiesApiService = async (
   session: ReapitConnectSession | null,
-): Promise<PropertyModelPagedResult[] | undefined> => {
+): Promise<PropertyModelPagedResult | undefined> => {
   try {
     if (!session) return
 
@@ -17,7 +17,7 @@ export const propertiesApiService = async (
     })
 
     if (response.ok) {
-      const responseJson: Promise<PropertyModelPagedResult[] | undefined> = response.json()
+      const responseJson: Promise<PropertyModelPagedResult | undefined> = response.json()
       return responseJson
     }
 
