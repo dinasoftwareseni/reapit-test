@@ -1,8 +1,8 @@
 {
   "appEnv": "local",
-  "connectClientId": "",
+  "connectClientId": "353n985r755bpfiqnmpo9prp77",
   "connectOAuthUrl": "https://connect.reapit.cloud",
   "platformApiUrl": "https://platform.reapit.cloud",
-  "connectUserPoolId": "",
+  "connectUserPoolId": "eu-west-2_eQ7dreNzJ",
   "marketplaceUrl": "https://marketplace.reapit.cloud/installed"
 }

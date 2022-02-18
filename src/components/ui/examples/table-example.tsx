@@ -1,17 +1,22 @@
-import React, { Dispatch, FC, SetStateAction, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useState, useEffect } from 'react'
 import {
   BodyText,
   Button,
   ButtonGroup,
   elMb6,
   elMb7,
-  elSpan2,
+  // elSpan2,
   PersistantNotification,
-  StatusIndicator,
+  // StatusIndicator,
   Table,
   Title,
   useModal,
 } from '@reapit/elements'
+import { useReapitConnect } from '@reapit/connect-session'
+import { reapitConnectBrowserSession } from '../../../core/connect-session'
+import { propertiesApiService } from '../../../platform-api/properties-api'
+import { PropertyModelPagedResult } from '@reapit/foundations-ts-definitions'
+// import { openNewPage } from '../../utils/navigation'
 
 export const handleOnCloseModal =
   (setIndexExpandedRow: Dispatch<SetStateAction<number | null>>, closeModal: () => void) => () => {
@@ -20,18 +25,96 @@ export const handleOnCloseModal =
   }
 
 export const TableExample: FC = () => {
+  const { connectSession } = useReapitConnect(reapitConnectBrowserSession)
+  const [propertiesTypes, setPropertiesTypes] = useState<PropertyModelPagedResult[]>([])
+  // const [loading, setLoading] = useState<boolean>(false)
+
+ 
+
+  useEffect(() => {
+    const fetchPropertiesConfigs = async () => {
+      // setLoading(true)
+      const serviceResponse = await propertiesApiService(connectSession)
+
+      // console.log(serviceResponse)
+      if (serviceResponse) {
+        setPropertiesTypes(serviceResponse)
+      }
+      // setLoading(false)
+    }
+
+    if (connectSession) {
+      fetchPropertiesConfigs()
+    }
+  }, [connectSession])
+
+
   const [indexExpandedRow, setIndexExpandedRow] = useState<number | null>(null)
   const { Modal, openModal, closeModal } = useModal()
+
+  console.log(propertiesTypes._embedded)
+
   return (
     <>
-      <Title>Table Example</Title>
+      <Title>Properties for Sale</Title>
       <PersistantNotification className={elMb7} isExpanded intent="secondary" isInline isFullWidth>
         Straight from the Elements docs, the customised table example also has a button in the slide down that triggers
         a Modal dialogue. The custom setIndexExpandedRow function allows a callback to collapse the row when the modal
         is closed.
       </PersistantNotification>
-      <Table
-        numberColumns={9}
+       <Table
+        indexExpandedRow={indexExpandedRow}
+        setIndexExpandedRow={setIndexExpandedRow}
+            rows={propertiesTypes._embedded.map(({ id, created, modified, marketingMode }) => ({
+              cells: [
+                {
+                  label: 'ID',
+                  value: id ?? '',
+                  narrowTable: {
+                    showLabel: true,
+                  },
+                },
+                {
+                  label: 'Created',
+                  value: created ?? '',
+                  narrowTable: {
+                    showLabel: true,
+                  },
+                },
+                {
+                  label: 'Modified',
+                  value: modified ?? '',
+                  narrowTable: {
+                    showLabel: true,
+                  },
+                },
+                {
+                  label: 'Marketing Mode',
+                  value: marketingMode ?? '',
+                  narrowTable: {
+                    showLabel: true,
+                  },
+                },
+              ],
+              expandableContent: {
+                content: (
+                  <>
+                    <BodyText hasGreyText>
+                      You may wish to put either calls to action or forms in here that relate to the selected table row.
+                    </BodyText>
+                    <ButtonGroup alignment="center">
+                      <Button intent="primary" chevronRight type="submit" onClick={openModal}>
+                        Open Modal
+                      </Button>
+                    </ButtonGroup>
+                  </>
+                ),
+              },
+            }))}
+          /> 
+  
+      {/* <Table
+        // numberColumns={9}
         indexExpandedRow={indexExpandedRow}
         setIndexExpandedRow={setIndexExpandedRow}
         rows={[
@@ -186,7 +269,7 @@ export const TableExample: FC = () => {
             },
           },
         ]}
-      />
+      /> */}
       <Modal title="Modal Opened">
         <PersistantNotification className={elMb6} isExpanded isInline isFullWidth intent="danger">
           Closing me will collapse the table row
