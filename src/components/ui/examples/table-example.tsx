@@ -9,6 +9,9 @@ import {
   Table,
   Title,
   useModal,
+  FormLayout,
+  InputWrap,
+  InputGroup
 } from '@reapit/elements'
 import { useReapitConnect } from '@reapit/connect-session'
 import { reapitConnectBrowserSession } from '../../../core/connect-session'
@@ -90,10 +93,18 @@ export const TableExample: FC = () => {
               expandableContent: {
                 content: (
                   <>
-                    <BodyText hasGreyText>
-                      Address : {address?.line1}
-                    </BodyText>
+                    <form>
+                      <FormLayout hasMargin>
+                        <InputWrap>
+                          <InputGroup icon="homeSystem" label="Address" type="text" value= {address?.line1} />
+                        </InputWrap>
+                      </FormLayout>
+                    </form>
+                    
                     <ButtonGroup alignment="center">
+                      <Button intent="primary" chevronRight type="submit" onClick={()=>updateAddress(id)}>
+                        Update Address
+                      </Button>
                       <Button intent="primary" chevronRight type="submit" onClick={openModal}>
                         Open Modal
                       </Button>
