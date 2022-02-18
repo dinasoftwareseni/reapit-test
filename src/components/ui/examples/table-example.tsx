@@ -77,6 +77,8 @@ export const TableExample: FC = () => {
 
   console.log(newAddress)
 
+  console.log(updatePropertiesTypes)
+
 
   return (
     <>
