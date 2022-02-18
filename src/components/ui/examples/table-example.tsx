@@ -27,6 +27,7 @@ export const handleOnCloseModal =
 export const TableExample: FC = () => {
   const { connectSession } = useReapitConnect(reapitConnectBrowserSession)
   const [propertiesTypes, setPropertiesTypes] = useState<PropertyModelPagedResult>()
+  const [newAddress,setNewAddress]=useState('')
   
   useEffect(() => {
     const fetchPropertiesConfigs = async () => {
@@ -51,6 +52,12 @@ export const TableExample: FC = () => {
   const updateAddress =(e : any)=>{
     console.log(e)
   }
+
+  const handleChange=(e: React.ChangeEvent<HTMLInputElement >) => {
+    setNewAddress(e.target.value)
+  }
+
+  console.log(newAddress)
 
   return (
     <>
@@ -100,7 +107,7 @@ export const TableExample: FC = () => {
                     <form>
                       <FormLayout hasMargin>
                         <InputWrap>
-                          <InputGroup icon="homeSystem" label="Address" type="text" value= {address?.line1} />
+                          <InputGroup icon="homeSystem" label="Address" type="text" defaultValue= {address?.line1} onChange={handleChange}/>
                         </InputWrap>
                       </FormLayout>
                     </form>
