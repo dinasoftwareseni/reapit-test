@@ -4,7 +4,6 @@ export const BASE_HEADERS = {
 }
 
 export const BASE_UPDATE_HEADERS = {
-  'accept': 'application/json',
   'If-Match': 'address',
   'Content-Type': 'application/json-patch+json',
   'api-version': '2020-01-31',
@@ -13,5 +12,5 @@ export const BASE_UPDATE_HEADERS = {
 export const URLS = {
   CONFIGURATION_APPOINTMENT_TYPES: '/configuration/appointmentTypes',
   PROPERTIES_TYPES: '/properties/?marketingMode=selling',
-  UPDATE_PROPERTIES_TYPES:'/properties/${payload.id}'
+  UPDATE_PROPERTIES_TYPES: '/properties',
 }

@@ -8,7 +8,7 @@ export const propertiesUpdateApiService = async (
   try {
     if (!session) return
 
-    const response = await fetch(`${window.reapit.config.platformApiUrl}${URLS.PROPERTIES_TYPES}`, {
+    const response = await fetch(`${window.reapit.config.platformApiUrl}${URLS.UPDATE_PROPERTIES_TYPES}`, {
       method: 'PATCH',
       headers: {
         ...BASE_UPDATE_HEADERS,
