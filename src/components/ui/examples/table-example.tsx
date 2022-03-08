@@ -30,8 +30,8 @@ export const handleOnCloseModal =
 export const TableExample: FC = () => {
   const { connectSession } = useReapitConnect(reapitConnectBrowserSession)
   const [propertiesTypes, setPropertiesTypes] = useState<PropertyModelPagedResult>()
-  const [searchPropertiesTypes, setSearchPropertiesTypes] = useState<PropertyModelPagedResult>()
-  const [newPropertiesTypes, setNewPropertiesTypes] = useState<PropertyModelPagedResult>()
+  // const [searchPropertiesTypes, setSearchPropertiesTypes] = useState<PropertyModelPagedResult>()
+  // const [newPropertiesTypes, setNewPropertiesTypes] = useState<PropertyModelPagedResult>()
   const [addressLine1, setAddressLine1] = useState('')
   const [addressLine2, setAddressLine2] = useState('')
   const [addressPostcode, setAddressPostcode] = useState('')
@@ -49,6 +49,10 @@ export const TableExample: FC = () => {
 
   const fetchSearch = async (search:string)=>{
              
+    // console.log(search)
+    // setSearch(search)
+
+  
     const res = await fetch(`${window.reapit.config.platformApiUrl}${URLS.PROPERTIES_SEARCHBYADDRESS_TYPES}${search}`, {
       method:'GET',
       headers: {
@@ -59,23 +63,23 @@ export const TableExample: FC = () => {
     })
 
     if (res.ok) {
-      setSearchPropertiesTypes(await res.json())
+      setPropertiesTypes(await res.json())
     }
   }  
 
   useEffect(() => {
     if (connectSession) {
       fetchPropertiesConfigs()
-      fetchSearch(search)
+      // fetchSearch(search)
     }
 
-    if(search===''){
-      setNewPropertiesTypes(propertiesTypes)
-    }else{
-      setNewPropertiesTypes(searchPropertiesTypes)
-    }
+    // if(search===''){
+    //   setNewPropertiesTypes(propertiesTypes)
+    // }else{
+    //   setNewPropertiesTypes(searchPropertiesTypes)
+    // }
 
-  }, [connectSession,search,propertiesTypes,newPropertiesTypes])
+  }, [connectSession])
 
   const updateAddress = async (id:string,etag)=>{
     console.log('ID: '+id)
@@ -133,19 +137,20 @@ export const TableExample: FC = () => {
                   type="tel" 
                   placeholder="Search by Address" 
                   value={search} 
-                  onChange={(e)=>setSearch(e.target.value)} 
+                  // onChange={(e)=>setSearch(e.target.value)} 
+                  onChange={(e)=>fetchSearch(e.target.value)}
           />
           <Icon icon="searchSystem" />
         </InputGroup>
         {/* <Button intent="secondary" 
-        onClick={() => fetchSearch(search)}
+          onClick={() => fetchSearch(search)}
         >Search</Button> */}
       </CardWrap>
 
       <Table
         indexExpandedRow={indexExpandedRow}
         setIndexExpandedRow={setIndexExpandedRow}
-        rows={newPropertiesTypes?._embedded?.map(({ id, created, modified, marketingMode, currency, address, selling, _eTag }) => ({
+        rows={propertiesTypes?._embedded?.map(({ id, created, modified, marketingMode, currency, address, selling, _eTag }) => ({
           cells: [
             {
               label: 'ID',
@@ -198,7 +203,7 @@ export const TableExample: FC = () => {
             },
             {
               label: 'Action',
-              value: <Button intent="primary" onClick={()=>toggleDetails(address?.line1!)}>Show Details</Button>,
+              value: <Button intent="primary" onClick={()=>toggleDetails(id!)}>Show Details</Button>,
               narrowTable: {
                 showLabel: true,
               },
