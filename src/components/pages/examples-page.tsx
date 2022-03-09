@@ -5,6 +5,7 @@ import { Routes } from '../../constants/routes'
 import FormExample from '../ui/examples/form-example'
 import TableExample from '../ui/examples/table-example'
 import ListExample from '../ui/examples/list-example'
+import DetailsPage from '../ui/examples/details'
 import {
   BodyText,
   Button,
@@ -40,6 +41,9 @@ const ExamplesPage: FC = () => {
           <SecondaryNavItem onClick={navigate(history, Routes.FORM)} active={pathname.includes(Routes.FORM)}>
             Form
           </SecondaryNavItem>
+          <SecondaryNavItem onClick={navigate(history, Routes.DETAILS)} active={pathname.includes(Routes.DETAILS)}>
+            Details
+          </SecondaryNavItem>
         </SecondaryNav>
         <Icon className={elMb5} icon="designInfographic" iconSize="large" />
         <BodyText hasGreyText>
@@ -54,6 +58,7 @@ const ExamplesPage: FC = () => {
         <Route path={Routes.TABLE} component={TableExample} exact />
         <Route path={Routes.LIST} component={ListExample} exact />
         <Route path={Routes.FORM} component={FormExample} exact />
+        <Route path={Routes.DETAILS} component={DetailsPage} exact />
       </PageContainer>
     </FlexContainer>
   )

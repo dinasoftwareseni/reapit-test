@@ -1,4 +1,5 @@
 import React, { Dispatch, FC, SetStateAction, useState, useEffect } from 'react'
+import { useHistory } from 'react-router'
 import {
   Button,
   ButtonGroup,
@@ -13,13 +14,15 @@ import {
   InputGroup,
   Input,
   CardWrap,
-  Icon
+  Icon,
 } from '@reapit/elements'
 import { useReapitConnect } from '@reapit/connect-session'
 import { reapitConnectBrowserSession } from '../../../core/connect-session'
 import { propertiesApiService } from '../../../platform-api/properties-api'
 import { PropertyModelPagedResult } from '@reapit/foundations-ts-definitions'
 import { URLS } from '../../../constants/api'
+// import { DetailsPage } from './details'
+import { Routes } from '../../../constants/routes'
 
 export const handleOnCloseModal =
   (setIndexExpandedRow: Dispatch<SetStateAction<number | null>>, closeModal: () => void) => () => {
@@ -30,15 +33,16 @@ export const handleOnCloseModal =
 export const TableExample: FC = () => {
   const { connectSession } = useReapitConnect(reapitConnectBrowserSession)
   const [propertiesTypes, setPropertiesTypes] = useState<PropertyModelPagedResult>()
-  // const [searchPropertiesTypes, setSearchPropertiesTypes] = useState<PropertyModelPagedResult>()
-  // const [newPropertiesTypes, setNewPropertiesTypes] = useState<PropertyModelPagedResult>()
   const [addressLine1, setAddressLine1] = useState('')
   const [addressLine2, setAddressLine2] = useState('')
   const [addressPostcode, setAddressPostcode] = useState('')
   const [search, setSearch] = useState('')
   const [indexExpandedRow, setIndexExpandedRow] = useState<number | null>(null)
   const { Modal, openModal, closeModal } = useModal()
- 
+  const [newId, setNewId] = useState('')
+
+  let history = useHistory();
+
   const fetchPropertiesConfigs = async () => {
     const serviceResponse = await propertiesApiService(connectSession)
 
@@ -47,63 +51,51 @@ export const TableExample: FC = () => {
     }
   }
 
-  const fetchSearch = async (search:string)=>{
-             
-    // console.log(search)
-    // setSearch(search)
-
-  
+  const fetchSearch = async (search: string) => {
+    console.log(search)
+    setSearch(search)
     const res = await fetch(`${window.reapit.config.platformApiUrl}${URLS.PROPERTIES_SEARCHBYADDRESS_TYPES}${search}`, {
-      method:'GET',
+      method: 'GET',
       headers: {
-        'accept':'application/json',
+        accept: 'application/json',
         'api-version': '2020-01-31',
-        'Authorization': `Bearer ${connectSession?.accessToken}`,
+        Authorization: `Bearer ${connectSession?.accessToken}`,
       },
     })
 
     if (res.ok) {
       setPropertiesTypes(await res.json())
     }
-  }  
+  }
 
   useEffect(() => {
     if (connectSession) {
       fetchPropertiesConfigs()
-      // fetchSearch(search)
     }
-
-    // if(search===''){
-    //   setNewPropertiesTypes(propertiesTypes)
-    // }else{
-    //   setNewPropertiesTypes(searchPropertiesTypes)
-    // }
-
   }, [connectSession])
 
-  const updateAddress = async (id:string,etag)=>{
-    console.log('ID: '+id)
-    console.log('etag: '+etag)
+  const updateAddress = async (id: string, etag) => {
+    console.log('ID: ' + id)
+    console.log('etag: ' + etag)
     openModal()
-      
-    const res = await fetch(`${window.reapit.config.platformApiUrl}${URLS.PROPERTIES_TYPES}${id}`, {
-      method:'PATCH',
+
+    await fetch(`${window.reapit.config.platformApiUrl}${URLS.PROPERTIES_TYPES}${id}`, {
+      method: 'PATCH',
       headers: {
-        'accept':'application/json',
+        accept: 'application/json',
         'If-Match': etag,
         'Content-Type': 'application/json-patch+json',
         'api-version': '2020-01-31',
-        'Authorization': `Bearer ${connectSession?.accessToken}`,
+        Authorization: `Bearer ${connectSession?.accessToken}`,
       },
-      body:JSON.stringify({
-        "address":{
-          "line1":addressLine1,
-          "line2":addressLine2,
-          "postcode":addressPostcode
-        }
-      })
+      body: JSON.stringify({
+        address: {
+          line1: addressLine1,
+          line2: addressLine2,
+          postcode: addressPostcode,
+        },
+      }),
     })
-
   }
 
   const handleChangeAddressLine1 = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,8 +110,9 @@ export const TableExample: FC = () => {
     setAddressPostcode(e.target.value)
   }
 
-  const toggleDetails =(e:any)=>{
-    console.log(e)
+  const toggleDetails = (id:string,description:string, line1:string, marketingMode:string) => {  
+    history.push(Routes.DETAILS,{id,description,line1,marketingMode})
+    
   }
 
   return (
@@ -133,26 +126,24 @@ export const TableExample: FC = () => {
 
       <CardWrap>
         <InputGroup>
-          <Input  id="myId2" 
-                  type="tel" 
-                  placeholder="Search by Address" 
-                  value={search} 
-                  // onChange={(e)=>setSearch(e.target.value)} 
-                  onChange={(e)=>fetchSearch(e.target.value)}
+          <Input
+            id="myId2"
+            type="tel"
+            placeholder="Search by Address"
+            value={search}
+            onChange={(e) => fetchSearch(e.target.value)}
           />
           <Icon icon="searchSystem" />
         </InputGroup>
-        {/* <Button intent="secondary" 
-          onClick={() => fetchSearch(search)}
-        >Search</Button> */}
       </CardWrap>
 
       <Table
         indexExpandedRow={indexExpandedRow}
         setIndexExpandedRow={setIndexExpandedRow}
-        rows={propertiesTypes?._embedded?.map(({ id, created, modified, marketingMode, currency, address, selling, _eTag }) => ({
-          cells: [
-            {
+        rows={propertiesTypes?._embedded?.map(
+          ({ id, created, modified, marketingMode, currency, address, selling, _eTag, description }) => ({
+            cells: [
+              {
               label: 'ID',
               value: id ?? '',
               narrowTable: {
@@ -165,6 +156,7 @@ export const TableExample: FC = () => {
               narrowTable: {
                 showLabel: true,
               },
+
             },
             {
               label: 'Modified',
@@ -203,7 +195,7 @@ export const TableExample: FC = () => {
             },
             {
               label: 'Action',
-              value: <Button intent="primary" onClick={()=>toggleDetails(id!)}>Show Details</Button>,
+              value: <Button intent="primary" onClick={()=>toggleDetails(id!,description!, address?.line1!, marketingMode!)}>Show Details</Button>,
               narrowTable: {
                 showLabel: true,
               },
@@ -219,21 +211,21 @@ export const TableExample: FC = () => {
                         contentEditable icon="homeSystem"
                         label="Address (Line1)"
                         type="text"
-                        defaultValue={address?.line1}
+                        value={addressLine1===''? address?.line1:addressLine1}
                         onChange={handleChangeAddressLine1}
                       />
                       <InputGroup
                           contentEditable icon="homeSystem"
                           label="Address (Line2)"
                           type="text"
-                          defaultValue={address?.line2}
+                          value={addressLine2===''? address?.line2:addressLine2}
                           onChange={handleChangeAddressLine2}
                       />
                        <InputGroup
                           contentEditable icon="homeSystem"
                           label="Postcode"
                           type="text"
-                          defaultValue={address?.postcode}
+                          value={addressPostcode===''? address?.postcode:addressPostcode}
                           onChange={handleChangeAddressPostcode}
                       />
                     </InputWrap>
@@ -248,7 +240,8 @@ export const TableExample: FC = () => {
               </>
             ),
           },
-        }))}
+    }),
+        )}
       />
       <Modal title="Update Confirmation">
         <PersistantNotification className={elMb6} isExpanded isInline isFullWidth intent="danger">
@@ -260,7 +253,7 @@ export const TableExample: FC = () => {
           </Button>
         </ButtonGroup>
       </Modal>
-      
+      {/* <DetailsPage id={newId}/> */}
     </>
   )
 }

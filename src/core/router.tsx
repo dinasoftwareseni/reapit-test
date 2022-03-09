@@ -44,6 +44,7 @@ const Router = () => (
             <Route path={Routes.FORM} exact component={ExamplesPage} />
             <Route path={Routes.TABLE} exact component={ExamplesPage} />
             <Route path={Routes.LIST} exact component={ExamplesPage} />
+            <Route path={Routes.DETAILS} exact component={ExamplesPage} />
             <Route path={Routes.DATA} exact component={DataPage} />
           </Switch>
         </PrivateRouteWrapper>

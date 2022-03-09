@@ -60,6 +60,11 @@ export const Nav: FC = () => {
           callback: navigate(history, Routes.FORM),
           text: 'Form',
         },
+        {
+          itemIndex: 3,
+          callback: navigate(history, Routes.DETAILS),
+          text: 'Details',
+        },
       ],
     },
   ]
